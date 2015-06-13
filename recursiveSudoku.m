@@ -1,13 +1,16 @@
-function [finishedsudoku, finished]= recursiveSudoku(sudoku, row, col, blockRow, blockCol)
+function [finishedsudoku, finished]= recursiveSudoku(sudoku, runningtime)
 if isempty(nonzeros(sudoku==0))
     finished = true;
     finishedsudoku = sudoku;
     return
+elseif runningtime > 2
+    finished = true;
+    finishedsudoku = 0;
 else
-    
-    
-    
     j=1;
+    [row,col] = find(sudoku==0);
+    blockRow = ceil(row./3);
+    blockCol = ceil(col./3);
     rowNums = nonzeros(sudoku(row(j),:))';
     colNums = nonzeros(sudoku(:,col(j)))';
     nums = 1:9;
@@ -17,18 +20,16 @@ else
     blockNums = nonzeros(sudoku(blockRows, blockCols))';
     nonums = unique([rowNums, colNums, blockNums]);
     nums(nonums) = [];
+    
     if isempty(nums)
         finished = false;
         finishedsudoku = 0;
         return
     else
+
         for k = 1:length(nums);
             sudoku(row(j),col(j)) = nums(k);
-            row(1) = [];
-            col(1) = [];
-            blockRow(1)=[];
-            blockCol(1)=[];
-            [newsudoku, finished] = recursiveSudoku(sudoku, row, col, blockRow, blockCol);
+            [newsudoku, finished] = recursiveSudoku(sudoku, toc);
             if finished
                 finishedsudoku = newsudoku;
                 return
